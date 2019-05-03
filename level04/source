@@ -1,0 +1,53 @@
+int		main()
+{
+	pid_t	pid; // [esp + 0xac]
+	char	buff[32] // [esp + 0x20]
+
+	pid = fork();
+	bzero(buff, 32); // pas de call a la fonction
+
+	int nb1 = 0; // [esp + a8]
+	int nb2 = 0; // [esp + 0x1c]
+
+	if (pid != 0) // parent
+	{
+		while (1)
+		{
+			wait(nb2);
+			
+			if (nb2 & 127 != 0)
+			{
+				int nb3 = nb2;
+				nb3 &= 127;
+				nb3 += 1;
+				char tmp = (char)nb3;
+				tmp >>= 1;
+				if (tmp > 0)
+				{
+					puts("child is exiting...");
+					return 0;
+				}
+				else
+				{
+					if (ptrace(PTRACE_PEEKUSER, pid, 44, 0) != 11)
+						break ;
+					else
+					{
+						puts("no exec() for you");
+						kill(pid, SIGKILL);
+						return 0;
+					}
+				}
+			}	
+		}
+	}
+	else
+	{
+		prctl(1, 1);
+		ptrace(PTRACE_TRACEME, 0, 0, 0);
+		puts("Give me some shellcode, k");
+		gets(buff);	
+	}
+
+	return 0;
+}

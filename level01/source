@@ -1,0 +1,51 @@
+int		verify_user_name()
+{
+	puts("verifying username....\n");
+	returns strncmp(0x804a040, "dat_wil", 7); // pas de call a la fonction
+}
+
+int		verify_user_pass(char *str)
+{
+	return strncmp(str, "admin", 5); // pas de call a la fonction
+}
+
+int		main()
+{
+	char *buff; // [esp + 0x1c]
+	bzero(buff, 16); // pas de vrai call a la fonction
+	
+	int nb = 0; // [esp + 0x5c];
+	
+	puts("********* ADMIN LOGIN PROMPT *********");
+	printf("Enter Username: ");
+
+	char *ptr = 0x804a040; // a_user_name
+	fgets(ptr, 256, STDIN);
+	if (verify_user_name() != 0)
+	{
+		puts("nope, incorrect username...\n");
+		return 1;
+	}
+
+	puts("Enter Password:");
+	fgets(buff, 100, STDIN);
+	
+	nb = verify_user_pass(buff);
+	
+	if (nb == 0)
+	{
+		put("nope, incorrect password...\n");
+        return 1;
+	}
+	
+	if (nb != 0)
+	{
+		put("nope, incorrect password...\n");
+		return 1;
+	}
+
+	// lea esp, [ebp-0x8]
+	
+	return 0;
+	
+}

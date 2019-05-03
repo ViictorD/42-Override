@@ -1,0 +1,64 @@
+int		main()
+{
+	[rbp - 0x114] = edi; // 1
+	[rbp - 0x120] = rsi; // 0xffffd678
+
+	void *ptr = [rbp - 0x70]
+	bzero(ptr, 12);
+
+	void *ptr2 = [rbp - 0xa0]
+	bzero(ptr, 5);
+
+	void *ptr3 = [rbp - 0x110]
+    bzero(ptr, 12);
+
+	FILE *fd; // [rbp - 0x8]
+	size_t nb; // [rbp - 0xc]
+
+	fd = fopen("/home/users/level03/.pass", "r");
+
+	if (fd == 0)
+	{
+		fwrite("ERROR: failed to open password file\n", 36, 1, STDERR); // [rip+0x200991]
+		exit(1);
+	}
+
+	nb = fread(ptr2, 41, 1, fd);
+
+	ptr2 + strcspn(ptr2, "\n") = 0;
+
+	if (nb != 41)
+	{
+		fwrite("ERROR: failed to read password file\n", 36, 1, STDERR); // [rip+0x20091e]
+		fwrite("ERROR: failed to read password file\n", 36, 1, STDERR);	// [rip+0x2008fa]
+		exit(1);
+	}
+
+	fclose(fd);
+	
+	puts("===== [ Secure Access System v1.0 ] =====");
+	puts("/***************************************\\");
+	puts("| You must login to access this system. |");
+	puts("\\***************************************/");
+
+	printf("--[ Username: ");
+	fgets(ptr, 100, STDIN);
+	ptr + strcspn(ptr, "\n") = 0;
+
+	printf("--[ Password: ");
+	fgets(ptr3, 100, STDIN);
+	ptr3 + strcspn(ptr3, "\n") = 0;
+
+	puts("*****************************************");
+
+	if (!strncmp(ptr2, ptr3))
+	{
+		printf("Greetings, %s!\n", ptr);
+		system("/bin/sh");
+		return 0;
+	}
+
+	printf(ptr);
+	puts(" does not have access!");
+	exit(1);
+}

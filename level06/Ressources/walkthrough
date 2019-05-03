@@ -1,0 +1,25 @@
+# Apres review du code on voit que la fonction auth fait plein d'operation sur le username passe pour obtenir un serial qui est compare au notre.
+# si il est identique on a un acces au shell.
+
+# On va donc tres simplement donner une string au program, regarder le serial qu'elle  genere puis relancer le programe avec ce meme serial.
+
+./gdb ./level06
+b *0x80487ba // un breakpoint apres le ptrace pour jump la verif si on utilise un debugeur.
+b *0x8048869 // un endroit ou regarder le serial genere
+run
+
+> -> Enter Login: abcdef
+> -> Enter Serial: osef
+
+jump *0x80487ed // la ou c'est cense jump si on est pas en debugeur
+x/wx $ebp - 0x10 // pour print le serial genere de la string "abcdef"
+0xffffd688:     0x005f1ae2
+
+$ 0x5f1ae2 = 6232802
+
+# On a plus que le lancer et mettre le serial
+
+./level06
+> -> Enter Login: abcdef
+> -> Enter Serial: 6232802
+> cat /home/users/level07/.pass

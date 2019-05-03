@@ -1,0 +1,19 @@
+# On commence par recuperer le nombre qui xor.
+# Q = 118
+0101 0001 // Q
+0001 0010 // 18 (nombre mystere)
+
+0100 0011 // C = resultat
+
+# On obtient 18.
+# Il nous faut donc envoyer cette valeur a la fonction decrypt
+#
+# Il suffit simple que le resultat de la soustraction de la valeur constant sois 18.
+# Donc	0x1337d00d - 0x12 = 0x1337CFFBi
+# 		322424845 - 18 = 322424827
+#
+# 18 est <= 21 donc il va etre envoyer a la fonction decrypt
+#
+./level03
+Password: 322424827
+$ cat /home/users/level04/.pass

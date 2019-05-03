@@ -1,0 +1,39 @@
+void	decrypt(int value)
+{
+	char *str = "Q}|u`sfg~sf{}|a3"; // [ebp - 0x1d]
+	int nb = strlen(str); // [ebp - 0x24]
+
+	for (int i = 0; i < nb; i++)
+		str[i] = str[i] ^ value;
+	
+	if (!strncmp("Congratulations!", str, 17))
+		system("/bin/bash");
+	else
+		puts("\nInvalid Password");
+}
+
+void	test(int input, int const)
+{
+	int nb = const - input;
+	if (nb <= 21)
+	{
+		void *ptr = (void*)(0x80489f0 + (nb << 2));
+		jump *ptr;
+	}
+	else
+		decrypt(rand())	;
+}
+
+int		main()
+{
+	srand(time(0));
+	puts("***********************************");
+	puts("*\t\tlevel03\t\t**");
+	puts("***********************************");
+	printf("Password:");
+
+	char *ptr; // [esp + 0x1c]
+	scanf("%d", ptr);
+	test(ptr, 0x1337d00d);
+	return 0;
+}

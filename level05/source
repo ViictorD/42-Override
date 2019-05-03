@@ -1,0 +1,14 @@
+int		main()
+{
+	char	str[100];	// [esp + 0x28]
+
+	fgets(str, 100, STDIN);
+
+	for (int i = 0; i < strlen(str); i++)
+	{
+		if (str[i] >= 'A' && str[i] <= 'Z')
+			str[i] = str[i] ^ 32;
+	}
+	printf(str);
+	exit(0);		
+}
