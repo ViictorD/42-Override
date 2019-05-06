@@ -1,0 +1,67 @@
+
+struct s_msg
+{
+	char	message[140];
+	char	username[40]; // + 0x8c
+	int	msglen; // + 0xb4
+};
+
+void	secret_backdoor()
+{
+	char	*buff; // [rbp - 0x80]
+
+	fgets(buff, 128, STDIN);
+	system(buff);
+}
+
+
+void	set_msg(struct s_msg *infomsg)
+{
+	char	str[128]; // [rbp - 0x400]
+	bzero(str, 128);
+
+	puts(">: Msg @Unix-Dude");
+	printf(">>: ");
+
+	fgets(str, 1024, STDIN);
+
+	strncpy(infomsg->message, str, infomsg->msglen);
+}
+
+void	set_username(struct s_msg *infomsg)
+{
+	char	str[16]; // [rbp - 0x90]
+	bzero(str, 16);
+
+	puts(">: Enter your username");
+	printf(">>: ");
+
+	fgets(str, 128, STDIN);
+
+	for (int nb = 0; i <= 40 && str[i]; i++)
+		infomsg->username[i] = str[i];
+
+	printf(">: Welcome, %s", infomsg->username);
+}
+
+void	handle_msg()
+{
+	struct s_msg	infomsg; [rbp - 0x34]
+	bzero(infomsg.username, 40);
+	
+	infomsg.msglen = 140;
+
+	set_username(&infomsg);
+	set_msg(&infomsg);
+
+	puts(">: Msg sent!");
+}
+
+int	main()
+{
+	puts("	--------------------------------------------
+		|   ~Welcome to l33t-m$n ~    v1337        |
+		--------------------------------------------");
+	handle_msg();
+	return 0;
+}

