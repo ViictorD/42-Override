@@ -1,15 +1,15 @@
 int		main()
 {
-	[rbp - 0x114] = edi; // 1
-	[rbp - 0x120] = rsi; // 0xffffd678
+	[rbp - 0x114] = edi; // argc
+	[rbp - 0x120] = rsi; // argv
 
-	void *ptr = [rbp - 0x70]
+	void ptr[100]; [rbp - 0x70]
 	bzero(ptr, 12);
 
-	void *ptr2 = [rbp - 0xa0]
+	void ptr2[48]; // [rbp - 0xa0]
 	bzero(ptr, 5);
 
-	void *ptr3 = [rbp - 0x110]
+	void ptr3[112]; // [rbp - 0x110]
     bzero(ptr, 12);
 
 	FILE *fd; // [rbp - 0x8]

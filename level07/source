@@ -40,8 +40,7 @@ int		store_number(unsigned int *data)
 		return 1;
 	}
 
-	// index = index << 2;
-	// ((char*)data)[index * 4]
+	// index = index << 2; // (char*)data[index * 4]
 
 	data[index] = nb;
 	return 0;
