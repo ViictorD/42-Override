@@ -17,7 +17,7 @@ void	secret_backdoor()
 
 void	set_msg(struct s_msg *infomsg)
 {
-	char	str[128]; // [rbp - 0x400]
+	char	str[1024]; // [rbp - 0x400]
 	bzero(str, 128);
 
 	puts(">: Msg @Unix-Dude");
@@ -30,7 +30,7 @@ void	set_msg(struct s_msg *infomsg)
 
 void	set_username(struct s_msg *infomsg)
 {
-	char	str[16]; // [rbp - 0x90]
+	char	str[128]; // [rbp - 0x90]
 	bzero(str, 16);
 
 	puts(">: Enter your username");
